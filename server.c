@@ -35,7 +35,7 @@ int main()
         //receive data
         recvfrom(sockfd,&buf,sizeof(buf),0,(struct sockaddr*)&cli,&len);
         //print reveived data
-        printf("recv string =%s\n",buf);
+        printf("recv string: %s\n",buf);
         //send back ack
         sendto(sockfd,&buf_answ,sizeof(buf_answ),0,(struct sockaddr*)&cli,len);
     }

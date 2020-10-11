@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<errno.h>
+#include<stdlib.h>
 #include<string.h>
 #include<sys/types.h>
 #include<sys/socket.h>
@@ -59,10 +60,17 @@ int main()
         int receivePacketLen = recvfrom(sockfd,&buf_answ_get,sizeof(buf_answ_get),0,(struct sockaddr*)&addr,&len);
         //times out
         int time_out_counter = 0;
-        if(receivePacketLen == -1 && errno == EAGAIN)      
+        while(receivePacketLen == -1 && errno == EAGAIN)      
         {
-            printf("Server does not respond\n");
-            continue;
+            if(time_out_counter >= 3){
+                printf("Server does not respond\n");
+                exit(0);
+            }
+            time_out_counter += 1;
+            printf("Resending %s\n", buf);
+            sendto(sockfd,&buf, sizeof(buf),0,(struct sockaddr*)&addr,sizeof(addr));
+            socklen_t len=sizeof(addr);
+            int receivePacketLen = recvfrom(sockfd,&buf_answ_get,sizeof(buf_answ_get),0,(struct sockaddr*)&addr,&len);
         }
 
         if(66 == buf_answ_get)
