@@ -1,13 +1,13 @@
-#include<stdio.h>
-#include<errno.h>
-#include<stdlib.h>
-#include<string.h>
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<unistd.h>
-#include<arpa/inet.h>
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include "message.h"
 
-int client_ID = 0;
 int AutoMessage[10] = {0,0,0,0,0,0,1,2,3,4};
 
 int main()
@@ -16,6 +16,7 @@ int main()
     int sockfd = socket(AF_INET,SOCK_DGRAM,0);
     char buf_answ_get = 0;
     char buf[20] = {0};
+    char send_buf[DEFAULT_MSG_LEN] = {0};
     //set network connection object
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
@@ -49,12 +50,15 @@ int main()
                 break;
             }
 
-            sprintf(buf, "Message %d", sequence_number);
+            sprintf(buf, "Message: %d", sequence_number);
             printf("Sending %s with type %d\n", buf, AutoMessage[message_type]);
         }
+        Message cur_msg = new_data(buf, (char)sequence_number);
+        packing(cur_msg, send_buf);
         
         // send message
-        sendto(sockfd,&buf, sizeof(buf),0,(struct sockaddr*)&addr,sizeof(addr));
+        sendto(sockfd, send_buf, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, sizeof(addr));
+        // sendto(sockfd, buf, sizeof(buf), 0, (struct sockaddr*)&addr, sizeof(addr));
 
         socklen_t len=sizeof(addr);
         int receivePacketLen = recvfrom(sockfd,&buf_answ_get,sizeof(buf_answ_get),0,(struct sockaddr*)&addr,&len);
