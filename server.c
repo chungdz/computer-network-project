@@ -22,7 +22,7 @@ int main()
 
     //绑定socket对象与通信链接
     ret =bind(sockfd,(struct sockaddr*)&addr,sizeof(addr));
-    if(0>ret)
+    if(0 > ret)
     {
         printf("bind\n");
         return -1;
@@ -32,13 +32,13 @@ int main()
     //循环等待数据
     while(1)
     {
-        //接受数据
+        //receive data
         recvfrom(sockfd,&buf,sizeof(buf),0,(struct sockaddr*)&cli,&len);
-        //输出数据
+        //print reveived data
         printf("recv string =%s\n",buf);
-        //应答接受结果
+        //send back ack
         sendto(sockfd,&buf_answ,sizeof(buf_answ),0,(struct sockaddr*)&cli,len);
     }
-    //关闭socket
+    //close socket
     close(sockfd);
 }
