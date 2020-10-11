@@ -6,30 +6,30 @@
 
 int main()
 {
-    //创建socket对象
+    //set socket object
     int sockfd=socket(AF_INET,SOCK_DGRAM,0);
     int ret;
     char buf[1024] ={0};
     //应答字符设置为66
     char buf_answ=66;
-    //创建客户端网络通信对象
+    //set network connection object
     struct sockaddr_in cli;
-    //创建及设置本地网络通信对象
+    //create and deploy local network connection object
     struct sockaddr_in addr;
     addr.sin_family =AF_INET;
     addr.sin_port =htons(1324);
     addr.sin_addr.s_addr=inet_addr("127.0.0.1");
 
-    //绑定socket对象与通信链接
+    //bind socket object and connection
     ret =bind(sockfd,(struct sockaddr*)&addr,sizeof(addr));
     if(0 > ret)
     {
         printf("bind\n");
         return -1;
     }
-    //设置len
+    //set lenth
     socklen_t len=sizeof(cli);
-    //循环等待数据
+    //wait for data
     while(1)
     {
         //receive data
