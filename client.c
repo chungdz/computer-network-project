@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "message.h"
@@ -14,9 +15,9 @@ int main()
 {
     //set socket object
     int sockfd = socket(AF_INET,SOCK_DGRAM,0);
-    char buf_answ_get = 0;
     char buf[20] = {0};
     char send_buf[DEFAULT_MSG_LEN] = {0};
+    char buf_answ_get[DEFAULT_MSG_LEN] = {0};
     //set network connection object
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
@@ -61,7 +62,7 @@ int main()
         // sendto(sockfd, buf, sizeof(buf), 0, (struct sockaddr*)&addr, sizeof(addr));
 
         socklen_t len=sizeof(addr);
-        int receivePacketLen = recvfrom(sockfd,&buf_answ_get,sizeof(buf_answ_get),0,(struct sockaddr*)&addr,&len);
+        int receivePacketLen = recvfrom(sockfd,&buf_answ_get, DEFAULT_MSG_LEN,0,(struct sockaddr*)&addr,&len);
         //times out
         int time_out_counter = 0;
         while(receivePacketLen == -1 && errno == EAGAIN)      
@@ -74,10 +75,10 @@ int main()
             printf("Resending %s\n", buf);
             sendto(sockfd,&buf, sizeof(buf),0,(struct sockaddr*)&addr,sizeof(addr));
             socklen_t len=sizeof(addr);
-            int receivePacketLen = recvfrom(sockfd,&buf_answ_get,sizeof(buf_answ_get),0,(struct sockaddr*)&addr,&len);
+            int receivePacketLen = recvfrom(sockfd,&buf_answ_get, DEFAULT_MSG_LEN,0,(struct sockaddr*)&addr,&len);
         }
 
-        if(66 == buf_answ_get)
+        if(66 == buf_answ_get[0])
         {
             printf("Message received\n");
         }
