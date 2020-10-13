@@ -5,6 +5,7 @@
 #include<arpa/inet.h>
 #include "message.h"
 #include<string.h>
+#include<stdlib.h>
 
 int main()
 {
@@ -35,45 +36,9 @@ int main()
     while(1)
     {
         //receive data
-        recvfrom(sockfd, &buf, sizeof(buf), 0, (struct sockaddr*)&cli, &len);
+        recvfrom(sockfd, buf, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&cli, &len);
         
-        char *p = buf;
-
-        Message cur_pack;
-        cur_pack.error_type = 0;
-
-        cur_pack.start_id  = *((short*) p);
-        p += 2;
-        cur_pack.client_id = *p;
-        p += 1;
-        cur_pack.data_type = *((short*) p);
-        p += 2;
-        cur_pack.sequence_number = *p;
-        p += 1;
-        cur_pack.length = *p;
-        p += 1;
-
-        cur_pack.message = p;
-        int real_length = 0;
-        char *tmp = p;
-        while(tmp[real_length] != '\0'){
-            real_length++;
-        }
-        real_length += 1;
-        // printf("real length: %d\n", real_length);
-
-        if(real_length != cur_pack.length){
-            cur_pack.error_type = LENGTH_MISMATCH;
-            cur_pack.length = real_length;
-            printf("length error\n");
-        }
-        p += cur_pack.length;
-
-        cur_pack.end_id = *((short*) p);
-        if(cur_pack.end_id != END_PACKAGE){
-            cur_pack.error_type = END_OF_PACKET_MISSING;
-            printf("missing end\n");
-        }
+        Message cur_pack = unpacking(buf);
         printf("recv string: %s with sequence number %d and end id %x\n", cur_pack.message, 
                                     cur_pack.sequence_number, cur_pack.end_id);
         //send back ack

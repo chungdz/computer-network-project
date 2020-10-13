@@ -78,7 +78,6 @@ Message new_data(char* mesg, char sequence_num){
 }
 
 Message unpacking(char* package){
-    int tlength = sizeof(package);
     char *p = package;
 
     Message cur_pack;
@@ -97,13 +96,20 @@ Message unpacking(char* package){
         cur_pack.length = *p;
         p += 1;
 
-        int correct_length = 9 + cur_pack.length;
-        if(tlength != correct_length){
-            cur_pack.error_type = LENGTH_MISMATCH;
-            return cur_pack;
-        }
-
         cur_pack.message = p;
+        int real_length = 0;
+        char *tmp = p;
+        while(tmp[real_length] != '\0'){
+            real_length++;
+        }
+        real_length += 1;
+        // printf("real length: %d\n", real_length);
+
+        if(real_length != cur_pack.length){
+            cur_pack.error_type = LENGTH_MISMATCH;
+            cur_pack.length = real_length;
+            printf("length error\n");
+        }
         p += cur_pack.length;
     }
     else if(cur_pack.data_type == MSG_ACK){
