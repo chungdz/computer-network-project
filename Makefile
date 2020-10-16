@@ -2,7 +2,7 @@
 
 CC=gcc
 
-SRCS1=client.c message.c
+SRCS1=client.c message.c mydatabase.c
 OBJS1=$(SRCS1:.c=.o)
 EXEC1=client
 

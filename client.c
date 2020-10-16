@@ -8,11 +8,16 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "message.h"
+#include "mydatabase.h"
 
 int AutoMessage[10] = {0,0,0,0,0,0,1,2,3,4};
 
 int main()
 {
+    //load query
+    Query q[1000];
+    int qlen = load_query(q, 1000);
+    printf("query length %d\n", qlen);
     //set socket object
     int sockfd = socket(AF_INET,SOCK_DGRAM,0);
     char buf[20] = {0};
