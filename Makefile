@@ -6,7 +6,7 @@ SRCS1=client.c message.c
 OBJS1=$(SRCS1:.c=.o)
 EXEC1=client
 
-SRCS2=server.c message.c
+SRCS2=server.c message.c mydatabase.c
 OBJS2=$(SRCS2:.c=.o)
 EXEC2=server
 

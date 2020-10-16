@@ -4,11 +4,16 @@
 #include<sys/socket.h>
 #include<arpa/inet.h>
 #include "message.h"
+#include "mydatabase.h"
 #include<string.h>
 #include<stdlib.h>
 
 int main()
 {
+    // load data
+    RegisterInfo database[1000];
+    int datalen = load_data(database, 1000);
+    printf("database length %d\n", datalen);
     //set socket object
     int sockfd=socket(AF_INET,SOCK_DGRAM,0);
     int ret;
@@ -36,6 +41,7 @@ int main()
     //wait for data
     //sequence number
     int pre_seq = 0;
+    printf("waiting...\n");
     while(1)
     {
         //receive data
