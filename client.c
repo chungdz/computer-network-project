@@ -56,13 +56,13 @@ int main()
         }
         Message cur_msg = new_data(buf, (char)sequence_number);
         packing(cur_msg, send_buf);
-        
+        break_message(send_buf, AutoMessage[message_type]);
         // send message
         sendto(sockfd, send_buf, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, sizeof(addr));
         // sendto(sockfd, buf, sizeof(buf), 0, (struct sockaddr*)&addr, sizeof(addr));
 
         socklen_t len=sizeof(addr);
-        int receivePacketLen = recvfrom(sockfd,&buf_answ_get, DEFAULT_MSG_LEN,0,(struct sockaddr*)&addr,&len);
+        int receivePacketLen = recvfrom(sockfd, &buf_answ_get, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, &len);
         //times out
         int time_out_counter = 0;
         while(receivePacketLen == -1 && errno == EAGAIN)      
@@ -75,20 +75,21 @@ int main()
             printf("Resending %s\n", buf);
             sendto(sockfd,&buf, sizeof(buf),0,(struct sockaddr*)&addr,sizeof(addr));
             socklen_t len=sizeof(addr);
-            int receivePacketLen = recvfrom(sockfd,&buf_answ_get, DEFAULT_MSG_LEN,0,(struct sockaddr*)&addr,&len);
+            receivePacketLen = recvfrom(sockfd, &buf_answ_get, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, &len);
         }
 
-        if(66 == buf_answ_get[0])
-        {
-            printf("Message received\n");
+        Message server_pack = unpacking(buf_answ_get);
+        if(server_pack.data_type == MSG_ACK){
+            printf("recv ACK with sequence number %d\n", server_pack.sequence_number);
+            sequence_number += 1;
         }
-        else
-        {
-            printf("Message lost\n");
+        else if(server_pack.data_type == MSG_REJECT){
+            char emsg[20];
+            error_message(server_pack.reject_sub_node, emsg);
+            printf("recv REJECT with sequence number %d and error type %s\n", server_pack.sequence_number, emsg);
         }
-
-        sequence_number += 1;
         message_type += 1;
+        printf("\n");
     }
     close(sockfd);
 }

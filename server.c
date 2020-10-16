@@ -13,6 +13,7 @@ int main()
     int sockfd=socket(AF_INET,SOCK_DGRAM,0);
     int ret;
     char buf[DEFAULT_MSG_LEN] = {0};
+    char sendback[DEFAULT_MSG_LEN] = {0};
     //应答字符设置为66
     char buf_answ=66;
     //set network connection object
@@ -33,6 +34,8 @@ int main()
     //set lenth
     socklen_t len=sizeof(cli);
     //wait for data
+    //sequence number
+    int pre_seq = 0;
     while(1)
     {
         //receive data
@@ -42,8 +45,22 @@ int main()
         printf("recv string: %s with sequence number %d and end id %x\n", cur_pack.message, 
                                     cur_pack.sequence_number, cur_pack.end_id);
         //send back ack
-        char sendback[DEFAULT_MSG_LEN] = {0};
-        sendto(sockfd, &buf_answ, sizeof(buf_answ), 0, (struct sockaddr*)&cli,len);
+        if(cur_pack.error_type == 0){
+            if(cur_pack.sequence_number <= pre_seq){
+                cur_pack.error_type = DUPLICATE_PACKET;
+            }
+            else if(cur_pack.sequence_number > pre_seq + 1){
+                cur_pack.error_type = OUT_OF_SEQUENCE;
+            }
+            else if(cur_pack.sequence_number == pre_seq + 1){
+                pre_seq += 1;
+            }
+        }
+
+        Message resp = reply_data(cur_pack);
+        packing(resp, sendback);
+
+        sendto(sockfd, &sendback, sizeof(sendback), 0, (struct sockaddr*)&cli,len);
     }
     //close socket
     close(sockfd);

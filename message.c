@@ -77,6 +77,24 @@ Message new_data(char* mesg, char sequence_num){
     return cur_pack;
 }
 
+Message reply_data(Message received_data){
+    Message cur_pack;
+    cur_pack.start_id = START_PACKAGE;
+    cur_pack.client_id = received_data.client_id;
+    cur_pack.sequence_number = received_data.sequence_number;
+    if(received_data.error_type == 0){
+        cur_pack.data_type = MSG_ACK;
+        cur_pack.error_type = 0;
+    } 
+    else{
+        cur_pack.data_type = MSG_REJECT;
+        cur_pack.error_type = received_data.error_type;
+    }
+    cur_pack.end_id = END_PACKAGE;
+
+    return cur_pack;
+}
+
 Message unpacking(char* package){
     char *p = package;
 
@@ -108,7 +126,6 @@ Message unpacking(char* package){
         if(real_length != cur_pack.length){
             cur_pack.error_type = LENGTH_MISMATCH;
             cur_pack.length = real_length;
-            printf("length error\n");
         }
         p += cur_pack.length;
     }
@@ -129,4 +146,37 @@ Message unpacking(char* package){
     }
 
     return cur_pack;
+}
+
+void break_message(unsigned char* buf, int error_type){
+    if(error_type == 0){return;}
+    else if(error_type == 1){
+        // out of sequence
+        unsigned char sequence_number = *(buf + 5);
+        *(buf + 5) = sequence_number + 1;
+    }
+    else if(error_type == 2){
+        // length mismatch
+        unsigned char length = *(buf + 6);
+        *(buf + 6) = length + 1;
+    }
+    else if(error_type == 3){
+        unsigned char length = *(buf + 6);
+        *(unsigned short*)(buf + 7 + length) = 0xFFF0;
+    }
+    else if(error_type == 4){
+        unsigned char sequence_number = *(buf + 5);
+        *(buf + 5) = sequence_number - 1;
+    }
+    return;
+}
+
+char* error_message(unsigned short error_code, char* emsg){
+    switch(error_code){
+        case OUT_OF_SEQUENCE: sprintf(emsg, "Out of Sequence"); break;
+        case LENGTH_MISMATCH: sprintf(emsg, "Length mismatch"); break;
+        case END_OF_PACKET_MISSING: sprintf(emsg, "End of packet missing"); break;
+        case DUPLICATE_PACKET: sprintf(emsg, "Duplicate packet"); break;
+    }
+    return emsg;
 }

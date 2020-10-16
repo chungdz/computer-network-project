@@ -31,3 +31,9 @@ Message unpacking(char * package);
 void check_package(char* package);
 //initialize the data message
 Message new_data(char* mesg, char sequence_num);
+//ack and reject 
+Message reply_data(Message received_data);
+//man made error
+void break_message(unsigned char* buf, int error_type);
+// error string
+char* error_message(unsigned short error_code, char* emsg);
