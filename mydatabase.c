@@ -5,14 +5,14 @@
 int load_data(RegisterInfo* database, int max_length){
     FILE *fp = fopen(FILE_PATH, "r");
     unsigned int number;
-    unsigned char tech;
+    unsigned int tech;
     int paid;
     int pointer = 0;
-    while(fscanf(fp, "%u, %c, %d", &number, &tech, &paid) != EOF){
+    while(fscanf(fp, "%u, %d, %d", &number, &tech, &paid) != EOF){
         // printf("%d\n", pointer);
         RegisterInfo* cur_p = database + pointer;
         cur_p->phone_number = number;
-        cur_p->tech = tech;
+        cur_p->tech = (unsigned char)tech;
         cur_p->paid = paid;
         pointer += 1;
         // printf("%u, %d, %d\n", number, tech, paid);
@@ -36,4 +36,16 @@ int load_query(Query* querylist, int max_length){
     }
     fclose(fp);
     return pointer;
+}
+
+unsigned short search_data(RegisterInfo* database, int max_len, Query query){
+    // printf("%u, %d\n", query.phone_number, query.tech);
+    unsigned short status = NOT_EXIST;
+    for(int i = 0;i < max_len;i++){
+        if(database[i].phone_number == query.phone_number && database[i].tech == query.tech){
+            if(database[i].paid == 1){status = ACCESS_OK;}
+            else{status = NOT_PAID;}
+        }
+    }
+    return status;
 }

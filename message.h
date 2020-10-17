@@ -20,10 +20,6 @@ typedef struct{
 #define LENGTH_MISMATCH ((unsigned short)0xFFF5)
 #define END_OF_PACKET_MISSING ((unsigned short)0xFFF6)
 #define DUPLICATE_PACKET ((unsigned short)0xFFF7)
-#define ACC_PER ((unsigned short)0xFFF8)
-#define NOT_PAID ((unsigned short)0xFFF9)
-#define NOT_EXIST ((unsigned short)0xFFFA)
-#define ACCESS_OK ((unsigned short)0xFFFB)
 #define DEFAULT_MSG_LEN 1024
 #define CLIENT_ID  0
 

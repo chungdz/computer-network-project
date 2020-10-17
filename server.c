@@ -50,23 +50,13 @@ int main()
         Message cur_pack = unpacking(buf);
         printf("recv query with phone number %u and technology %d\n", cur_pack.phone_number, 
                                     cur_pack.technology);
-        printf("recv query with end_id %x and sequence number %d\n", cur_pack.end_id, 
-                                    cur_pack.sequence_number);
-        //send back ack
-        // if(cur_pack.error_type == 0){
-        //     if(cur_pack.sequence_number <= pre_seq){
-        //         cur_pack.error_type = DUPLICATE_PACKET;
-        //     }
-        //     else if(cur_pack.sequence_number > pre_seq + 1){
-        //         cur_pack.error_type = OUT_OF_SEQUENCE;
-        //     }
-        //     else if(cur_pack.sequence_number == pre_seq + 1){
-        //         pre_seq += 1;
-        //     }
-        // }
+        Query rq;
+        rq.phone_number = cur_pack.phone_number;
+        rq.tech = cur_pack.technology;
 
-        // Message resp = reply_data(cur_pack);
-        // packing(resp, sendback);
+        Message reply = cur_pack;
+        reply.data_type = search_data(database, datalen, rq);
+        packing(reply, sendback);
 
         sendto(sockfd, &sendback, sizeof(sendback), 0, (struct sockaddr*)&cli,len);
     }

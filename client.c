@@ -85,16 +85,17 @@ int main()
             receivePacketLen = recvfrom(sockfd, &buf_answ_get, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, &len);
         }
 
-        // Message server_pack = unpacking(buf_answ_get);
-        // if(server_pack.data_type == MSG_ACK){
-        //     printf("recv ACK with sequence number %d\n", server_pack.sequence_number);
-        //     sequence_number += 1;
-        // }
-        // else if(server_pack.data_type == MSG_REJECT){
-        //     char emsg[20];
-        //     error_message(server_pack.reject_sub_node, emsg);
-        //     printf("recv REJECT with sequence number %d and error type %s\n", server_pack.sequence_number, emsg);
-        // }
+        Message server_pack = unpacking(buf_answ_get);
+        if(server_pack.data_type == NOT_PAID){
+            printf("Not paid received\n");
+        }
+        else if(server_pack.data_type == NOT_EXIST){
+            printf("Not exist received\n");
+        }
+        else if(server_pack.data_type == ACCESS_OK){
+            printf("Access ok received\n");
+        }
+        
         sequence_number += 1;
         message_type += 1;
         printf("\n");
