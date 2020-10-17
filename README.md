@@ -7,7 +7,7 @@ Use the following code in terminal to compile the files:
 
 ## Run the code
 After files compiled there are two executable files: client and server.
-Open two terminal to run the files. Run server first:
+Open two terminals to run the files. Run the server first:
 
 	./server
 
