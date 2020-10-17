@@ -24,13 +24,13 @@ int load_data(RegisterInfo* database, int max_length){
 int load_query(Query* querylist, int max_length){
     FILE *fp = fopen(QUERY_PATH, "r");
     unsigned int number;
-    unsigned char tech;
+    unsigned int tech;
     int pointer = 0;
-    while(fscanf(fp, "%u, %c", &number, &tech) != EOF){
+    while(fscanf(fp, "%u, %d", &number, &tech) != EOF){
         // printf("%d\n", pointer);
         Query* cur_p = querylist + pointer;
         cur_p->phone_number = number;
-        cur_p->tech = tech;
+        cur_p->tech = (unsigned char)tech;
         pointer += 1;
         // printf("%u, %d\n", number, tech);
     }

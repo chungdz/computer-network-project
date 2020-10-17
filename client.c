@@ -19,6 +19,7 @@ int main()
     //set socket object
     int sockfd = socket(AF_INET,SOCK_DGRAM,0);
     unsigned int phone_number;
+    unsigned int tech_tmp;
     unsigned char tech;
     char send_buf[DEFAULT_MSG_LEN] = {0};
     char buf_answ_get[DEFAULT_MSG_LEN] = {0};
@@ -48,7 +49,8 @@ int main()
         // hand made
         if(mode == 0){
             printf("Input phone number and technology：");
-            scanf("%u %c", &phone_number, &tech);
+            scanf("%u %d", &phone_number, &tech_tmp);
+            tech = (unsigned char)tech_tmp;
         }
         else if(mode == 1){
             if(message_type >= qlen){
@@ -93,8 +95,9 @@ int main()
         //     error_message(server_pack.reject_sub_node, emsg);
         //     printf("recv REJECT with sequence number %d and error type %s\n", server_pack.sequence_number, emsg);
         // }
-        // message_type += 1;
-        // printf("\n");
+        sequence_number += 1;
+        message_type += 1;
+        printf("\n");
     }
     close(sockfd);
 }

@@ -47,9 +47,11 @@ int main()
         //receive data
         recvfrom(sockfd, buf, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&cli, &len);
         
-        // Message cur_pack = unpacking(buf);
-        // printf("recv string: %s with sequence number %d and end id %x\n", cur_pack.message, 
-        //                             cur_pack.sequence_number, cur_pack.end_id);
+        Message cur_pack = unpacking(buf);
+        printf("recv query with phone number %u and technology %d\n", cur_pack.phone_number, 
+                                    cur_pack.technology);
+        printf("recv query with end_id %x and sequence number %d\n", cur_pack.end_id, 
+                                    cur_pack.sequence_number);
         //send back ack
         // if(cur_pack.error_type == 0){
         //     if(cur_pack.sequence_number <= pre_seq){
