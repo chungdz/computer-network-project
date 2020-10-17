@@ -15,7 +15,7 @@ int main()
 {
     //set socket object
     int sockfd = socket(AF_INET,SOCK_DGRAM,0);
-    char buf[20] = {0};
+    char buf[1000] = {0};
     char send_buf[DEFAULT_MSG_LEN] = {0};
     char buf_answ_get[DEFAULT_MSG_LEN] = {0};
     //set network connection object
