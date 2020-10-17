@@ -1,4 +1,6 @@
 # Program Assignment 1
+This directory includes the source code.
+The results of the communications are printed to the terminal and can be seen in the run time.
 
 ## Compile the files
 Use the following code in terminal to compile the files:
