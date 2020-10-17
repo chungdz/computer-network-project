@@ -10,8 +10,6 @@
 #include "message.h"
 #include "mydatabase.h"
 
-int AutoMessage[10] = {0,0,0,0,0,0,1,2,3,4};
-
 int main()
 {
     //load query
@@ -20,7 +18,8 @@ int main()
     printf("query length %d\n", qlen);
     //set socket object
     int sockfd = socket(AF_INET,SOCK_DGRAM,0);
-    char buf[20] = {0};
+    unsigned int phone_number;
+    unsigned char tech;
     char send_buf[DEFAULT_MSG_LEN] = {0};
     char buf_answ_get[DEFAULT_MSG_LEN] = {0};
     //set network connection object
@@ -48,20 +47,21 @@ int main()
     {
         // hand made
         if(mode == 0){
-            printf("Input message：");
-            scanf("%s", buf);
+            printf("Input phone number and technology：");
+            scanf("%u %c", &phone_number, &tech);
         }
         else if(mode == 1){
-            if(message_type >= sizeof(AutoMessage) / sizeof(int)){
+            if(message_type >= qlen){
                 break;
             }
 
-            sprintf(buf, "Message: %d", sequence_number);
-            printf("Sending %s with type %d\n", buf, AutoMessage[message_type]);
+            phone_number = q[message_type].phone_number;
+            tech = q[message_type].tech;
+            printf("Sending phone number %u with tech %d\n", phone_number, tech);
         }
-        Message cur_msg = new_data(buf, (char)sequence_number);
+        Message cur_msg = new_data(phone_number, tech, (char)sequence_number, ACC_PER);
         packing(cur_msg, send_buf);
-        break_message(send_buf, AutoMessage[message_type]);
+        
         // send message
         sendto(sockfd, send_buf, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, sizeof(addr));
         // sendto(sockfd, buf, sizeof(buf), 0, (struct sockaddr*)&addr, sizeof(addr));
@@ -77,24 +77,24 @@ int main()
                 exit(0);
             }
             time_out_counter += 1;
-            printf("Resending %s\n", buf);
-            sendto(sockfd,&buf, sizeof(buf),0,(struct sockaddr*)&addr,sizeof(addr));
+            printf("Resending phone number %u with tech %d\n", phone_number, tech);
+            sendto(sockfd, send_buf, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, sizeof(addr));
             socklen_t len=sizeof(addr);
             receivePacketLen = recvfrom(sockfd, &buf_answ_get, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, &len);
         }
 
-        Message server_pack = unpacking(buf_answ_get);
-        if(server_pack.data_type == MSG_ACK){
-            printf("recv ACK with sequence number %d\n", server_pack.sequence_number);
-            sequence_number += 1;
-        }
-        else if(server_pack.data_type == MSG_REJECT){
-            char emsg[20];
-            error_message(server_pack.reject_sub_node, emsg);
-            printf("recv REJECT with sequence number %d and error type %s\n", server_pack.sequence_number, emsg);
-        }
-        message_type += 1;
-        printf("\n");
+        // Message server_pack = unpacking(buf_answ_get);
+        // if(server_pack.data_type == MSG_ACK){
+        //     printf("recv ACK with sequence number %d\n", server_pack.sequence_number);
+        //     sequence_number += 1;
+        // }
+        // else if(server_pack.data_type == MSG_REJECT){
+        //     char emsg[20];
+        //     error_message(server_pack.reject_sub_node, emsg);
+        //     printf("recv REJECT with sequence number %d and error type %s\n", server_pack.sequence_number, emsg);
+        // }
+        // message_type += 1;
+        // printf("\n");
     }
     close(sockfd);
 }

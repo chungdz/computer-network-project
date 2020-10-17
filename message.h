@@ -4,11 +4,11 @@ typedef struct{
     unsigned short data_type;
     unsigned char sequence_number;
     unsigned char length;
+    unsigned char technology;
+    unsigned int phone_number;
     unsigned short end_id;
     unsigned short error_type;
     unsigned short reject_sub_node;
-    unsigned int total_length;
-    char *message;
 }Message;
 
 #define START_PACKAGE ((unsigned short)0xFFFF)
@@ -20,6 +20,10 @@ typedef struct{
 #define LENGTH_MISMATCH ((unsigned short)0xFFF5)
 #define END_OF_PACKET_MISSING ((unsigned short)0xFFF6)
 #define DUPLICATE_PACKET ((unsigned short)0xFFF7)
+#define ACC_PER ((unsigned short)0xFFF8)
+#define NOT_PAID ((unsigned short)0xFFF9)
+#define NOT_EXIST ((unsigned short)0xFFFA)
+#define ACCESS_OK ((unsigned short)0xFFFB)
 #define DEFAULT_MSG_LEN 1024
 #define CLIENT_ID  0
 
@@ -30,7 +34,7 @@ Message unpacking(char * package);
 //check package content
 void check_package(char* package);
 //initialize the data message
-Message new_data(char* mesg, char sequence_num);
+Message new_data(unsigned int phone_number, unsigned char tech, char sequence_num, unsigned short data_type);
 //ack and reject 
 Message reply_data(Message received_data);
 //man made error
