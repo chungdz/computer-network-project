@@ -72,8 +72,8 @@ int main()
                 exit(0);
             }
             time_out_counter += 1;
-            printf("Resending %s\n", buf);
-            sendto(sockfd,&buf, sizeof(buf),0,(struct sockaddr*)&addr,sizeof(addr));
+            printf("Resending %s with type %d\n", buf, AutoMessage[message_type]);
+            sendto(sockfd, send_buf, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, sizeof(addr));
             socklen_t len=sizeof(addr);
             receivePacketLen = recvfrom(sockfd, &buf_answ_get, DEFAULT_MSG_LEN, 0, (struct sockaddr*)&addr, &len);
         }
