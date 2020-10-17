@@ -1,4 +1,6 @@
 # Program Assignment 2
+This directory includes the source code, input file (query.txt), database file (Verification_Database.txt).
+The results of the communications are printed to the terminal and can be seen in the run time.
 
 ## Compile the files
 Use the following code in terminal to compile the files:
