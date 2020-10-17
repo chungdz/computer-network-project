@@ -1,7 +1,7 @@
 # Program Assignment 1
 This directory includes the source code.
 The results of the communications are printed to the terminal and can be seen in the run time.
-The program assignment 2 repository is in [here](https://github.com/chungdz/RL-Recruiter-Plus/blob/master/example/data/trajectory.json).
+The program assignment 2 repository is in [here](https://github.com/chungdz/computer-network-project/tree/hw2).
 
 ## Compile the files
 Environment: gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1)
